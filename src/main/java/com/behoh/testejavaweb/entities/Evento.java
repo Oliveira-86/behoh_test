@@ -1,12 +1,17 @@
 package com.behoh.testejavaweb.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 public class Evento implements Serializable {
@@ -17,9 +22,16 @@ public class Evento implements Serializable {
 	private Long id;
 	private String nome;
 	private Integer vagas;
+	
+	@JsonFormat(pattern="dd/MM/yyyy HH:mm")
 	private Date DataIn;
+	
+	@JsonFormat(pattern="dd/MM/yyyy HH:mm")
 	private Date Datafin;
 	
+	@ManyToMany(mappedBy="eventos")
+	private List<Usuario> usuarios = new ArrayList<>();
+	 
 	public Evento() {
 	}
 
@@ -70,6 +82,10 @@ public class Evento implements Serializable {
 
 	public void setDatafin(Date datafin) {
 		Datafin = datafin;
+	}
+	
+	public List<Usuario> getUsuarios() {
+		return usuarios;
 	}
 
 	@Override

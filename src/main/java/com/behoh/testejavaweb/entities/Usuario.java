@@ -1,11 +1,16 @@
 package com.behoh.testejavaweb.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -17,6 +22,13 @@ public class Usuario implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String nome;
+	
+	@ManyToMany
+	@JoinTable(name="USUÁRIO_EVENTO",
+			joinColumns = @JoinColumn(name="usuário_tb"),
+			inverseJoinColumns = @JoinColumn(name="evento_tb")		
+		)
+	private List<Evento> eventos = new ArrayList<>();
 	
 	public Usuario() {
 	}
@@ -41,6 +53,10 @@ public class Usuario implements Serializable {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	
+	public List<Evento> getEventos() {
+		return eventos;
 	}
 
 	@Override
