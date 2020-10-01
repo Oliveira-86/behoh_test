@@ -13,30 +13,33 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Table(name = "usuario_tb")
-public class Usuario implements Serializable {
+@Table(name = "user_tb")
+public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String nome;
+	private String name;
 	
+	@JsonIgnore
 	@ManyToMany
-	@JoinTable(name="USUÁRIO_EVENTO",
-			joinColumns = @JoinColumn(name="usuário_tb"),
-			inverseJoinColumns = @JoinColumn(name="evento_tb")		
+	@JoinTable(name="user_event",
+			joinColumns = @JoinColumn(name="user_tb"),
+			inverseJoinColumns = @JoinColumn(name="event_tb")		
 		)
-	private List<Evento> eventos = new ArrayList<>();
+	private List<Event> events = new ArrayList<>();
 	
-	public Usuario() {
+	public User() {
 	}
 
-	public Usuario(Long id, String nome) {
+	public User(Long id, String name) {
 		super();
 		this.id = id;
-		this.nome = nome;
+		this.name = name;
 	}
 
 	public Long getId() {
@@ -47,16 +50,16 @@ public class Usuario implements Serializable {
 		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getName() {
+		return name;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
-	public List<Evento> getEventos() {
-		return eventos;
+	public List<Event> getEvents() {
+		return events;
 	}
 
 	@Override
@@ -75,7 +78,7 @@ public class Usuario implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Usuario other = (Usuario) obj;
+		User other = (User) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
