@@ -4,79 +4,111 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.behoh.testejavaweb.entities.Event;
 import com.behoh.testejavaweb.entities.User;
 import com.behoh.testejavaweb.repositories.EventRepository;
-import com.behoh.testejavaweb.services.exceptions.ResourceNotFoundException;
+import com.behoh.testejavaweb.services.exceptions.DataBaseException;
+import com.behoh.testejavaweb.services.exceptions.EventNotFoundException;
 import com.behoh.testejavaweb.services.utils.UserRegister;
 
 @Service
 public class EventService {
-	
+
 	@Autowired
 	private EventRepository repository;
-	
-	public EventService (EventRepository repository) {
+
+	public EventService(EventRepository repository) {
 		this.repository = repository;
 	}
-	
+
 	public List<Event> findAll() {
-		return repository.findAll();	
+		return repository.findAll();
 	}
-	
+
 	public Event findById(Long id) {
 		Optional<Event> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+		return obj.orElseThrow(() -> new EventNotFoundException(id));
 	}
-	
+
 	public Event insert(Event obj) {
 		return repository.save(obj);
 	}
-	
+
 	public void delete(Long id) {
-		repository.deleteById(id);
-	}
-	
-	public Event update(Long id, Event obj) {
-		findById(obj.getId());
-		return repository.save(obj);
-	}
-	
-	public UserRegister register(Long id, User obj) {
-		Optional<Event> optinal = repository.findById(id);
-		Event event = optinal.orElseThrow(() -> new ResourceNotFoundException(id));
-		Integer vacancies = event.getVacancies();
-		List<User> list = event.getUsers();
-		LocalDateTime now = LocalDateTime.now();
-		
-		if(list.size() < vacancies) {
-			event.getUsers().add(obj);
-			return new UserRegister("User register for the event!");
-		}
-		if (now.compareTo(event.getdateStart().plusHours(-1)) >= 0 )  {
-			return new UserRegister("NOT REGISTERED. Expired registration date!");
-		}
-		else {
-			return new UserRegister("NOT REGISTERED. User limit reached!");
+		try {
+			repository.deleteById(id);
+		} 
+		catch (EmptyResultDataAccessException e) {
+			throw new EventNotFoundException(id);
+		} 
+		catch (DataIntegrityViolationException e) {
+			throw new DataBaseException(e.getMessage());
 		}
 	}
 
-	
-	public UserRegister deregister(Long id, User obj) {
-		Optional<Event> optinal = repository.findById(id);
-		Event event = optinal.orElseThrow(() -> new ResourceNotFoundException(id));
-		LocalDateTime now = LocalDateTime.now();
-		
-		if (event.getUsers().contains(obj) && now.isAfter(event.getdateStart())) {
-			return new UserRegister(" CAN NOT BE CANCELED");
-		}
-		else {
-			event.getUsers().remove(obj);
-			return new UserRegister("User deregister for the event!");
+	public Event update(Long id, Event obj) {
+		try {
+			Event entity = findById(id);
+			updateData(obj, entity);
+			return repository.save(obj);
+		} 
+		catch (EntityNotFoundException e) {
+			throw new EventNotFoundException(id);
 		}
 	}
 	
+	public void updateData(Event newObj, Event obj) {
+		newObj.setName(obj.getName());
+	}
+
+	public UserRegister register(Long eventId, User user) {
+		try {
+			Optional<Event> optinal = repository.findById(eventId);
+			Event event = optinal.orElseThrow(() -> new EventNotFoundException(eventId));
+			Integer vacancies = event.getVacancies();
+			List<User> list = event.getUsers();
+			LocalDateTime now = LocalDateTime.now();
+
+			if (list.size() < vacancies) {
+				event.getUsers().add(user);
+				return new UserRegister("User register for the event!");
+			}
+			if (now.compareTo(event.getdateStart().plusHours(-1)) >= 0) {
+				return new UserRegister("NOT REGISTERED. Expired registration date!");
+			} else {
+				return new UserRegister("NOT REGISTERED. User limit reached!");
+			}
+		} 
+		catch (EmptyResultDataAccessException e) {
+			throw new EventNotFoundException(eventId);
+		}
+
+	}
+
+	public UserRegister deregister(Long eventId, User user) {
+		try {
+			Optional<Event> optinal = repository.findById(eventId);
+			Event event = optinal.orElseThrow(() -> new EventNotFoundException(eventId));
+			LocalDateTime now = LocalDateTime.now();
+			
+			if (event.getUsers().contains(user) && now.isAfter(event.getdateStart())) {
+				return new UserRegister(" CAN NOT BE CANCELED");
+			}
+			else {
+				event.getUsers().remove(user);
+				return new UserRegister("User deregister for the event!");
+			}
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new EventNotFoundException(eventId);
+		}
+		
+	}
 }

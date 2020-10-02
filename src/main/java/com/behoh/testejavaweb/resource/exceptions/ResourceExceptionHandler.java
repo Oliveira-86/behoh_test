@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.behoh.testejavaweb.services.exceptions.DataBaseException;
-import com.behoh.testejavaweb.services.exceptions.ResourceNotFoundException;
+import com.behoh.testejavaweb.services.exceptions.EventNotFoundException;
 
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
-	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<StandardError> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request){
+	@ExceptionHandler(EventNotFoundException.class)
+	public ResponseEntity<StandardError> resourceNotFound(EventNotFoundException e, HttpServletRequest request){
 		String error = "Resource not found";
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());

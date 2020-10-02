@@ -61,16 +61,16 @@ public class EventResource {
 		return ResponseEntity.ok().body(obj);
 	}
 	
-	@GetMapping(value = "/{id}/{obj}")
-	public ResponseEntity<UserRegister> register(@RequestBody Long id, User obj) {
-		UserRegister register = service.register(id, obj);
-		return ResponseEntity.ok().body(register);
+	@PostMapping(value = "/{eventId}/register")
+	public ResponseEntity<UserRegister> register(@PathVariable Long eventId, @RequestBody User user) {
+			UserRegister register = service.register(eventId, user);
+			return ResponseEntity.ok().body(register);
 	}
 	
-	@DeleteMapping(value = "/{id}/{obj}")
-	public ResponseEntity<Void> deregister(@PathVariable Long id, User obj) {
-		service.deregister(id, obj);
-		return ResponseEntity.noContent().build();
+	@DeleteMapping(value = "/{eventId}/deregister/")
+	public ResponseEntity<UserRegister> deregister(@PathVariable Long eventId, @RequestBody User user) {
+			UserRegister response = service.deregister(eventId, user);
+			return ResponseEntity.ok().body(response);
+		
 	}
-	
 }
