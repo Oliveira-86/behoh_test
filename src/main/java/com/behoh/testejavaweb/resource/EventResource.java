@@ -2,6 +2,7 @@ package com.behoh.testejavaweb.resource;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.behoh.testejavaweb.entities.Event;
+import com.behoh.testejavaweb.entities.User;
+import com.behoh.testejavaweb.entities.dto.EventDTO;
 import com.behoh.testejavaweb.services.EventService;
+import com.behoh.testejavaweb.services.utils.UserRegister;
 
 @RestController
 @RequestMapping(value = "/events")
@@ -26,9 +30,10 @@ public class EventResource {
 	private EventService service; 
 	
 	@GetMapping
-	public ResponseEntity<List<Event>> findAll() {
+	public ResponseEntity<List<EventDTO>> findAll() {
 		List<Event> list = service.findAll();
-		return ResponseEntity.ok().body(list);
+		List<EventDTO> listDto = list.stream().map(x -> new EventDTO(x)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listDto);
 	}
 	
 	@GetMapping(value = "/{id}")
@@ -56,9 +61,16 @@ public class EventResource {
 		return ResponseEntity.ok().body(obj);
 	}
 	
-	/*@PostMapping
-	public ResponseEntity<Event> register(@RequesA Event obj) {
-		obj = service.register(1, usu1, date);
-	}*/
+	@GetMapping(value = "/{id}/{obj}")
+	public ResponseEntity<UserRegister> register(@RequestBody Long id, User obj) {
+		UserRegister register = service.register(id, obj);
+		return ResponseEntity.ok().body(register);
+	}
+	
+	@DeleteMapping(value = "/{id}/{obj}")
+	public ResponseEntity<Void> deregister(@PathVariable Long id, User obj) {
+		service.deregister(id, obj);
+		return ResponseEntity.noContent().build();
+	}
 	
 }
