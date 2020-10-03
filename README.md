@@ -40,3 +40,5 @@ Injetando suas dependências. Utilizando todas as  Annotations necessária do Sp
 ### Tratamento de exceções
 Criamos classes para gerar nossas exceções personalizadas, usando a camada de serviço para trata-las com as melhores práticas do mercado.
 
+`@ControllerAdvice`
+
