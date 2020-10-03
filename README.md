@@ -35,7 +35,7 @@ Executando no arquivo:
 
 `spring.profiles.active=dev`
 
-Injetando suas dependências. Utilizando todas as  Annotations necessária do Spring-Data-JPA como mapeamento.
+Injetando suas dependências. Utilizando todas as  Annotations necessária do Spring-Data-JPA como mapeamento objeto relacional.
 
 ### Tratamento de exceções
 Criamos classes para gerar nossas exceções personalizadas, usando a camada de serviço para trata-las com as melhores práticas do mercado.
