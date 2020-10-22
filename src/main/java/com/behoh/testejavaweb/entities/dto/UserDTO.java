@@ -7,6 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
 import com.behoh.testejavaweb.entities.User;
+import com.behoh.testejavaweb.entities.enums.TypeUser;
 
 public class UserDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -16,6 +17,9 @@ public class UserDTO implements Serializable {
 	@NotEmpty(message= "Mandatory")
 	@Length(min=5, max=30, message="The length should be between 5 and 30 characters")
 	private String name;
+	private String email;
+	private String cpfOuCnpj;
+	
 	
 	public UserDTO() {
 	}
@@ -39,5 +43,21 @@ public class UserDTO implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getCpfOuCnpj() {
+		return cpfOuCnpj;
+	}
+
+	public void setCpfOuCnpj(String cpfOuCnpj) {
+		this.cpfOuCnpj = cpfOuCnpj;
 	}
 }

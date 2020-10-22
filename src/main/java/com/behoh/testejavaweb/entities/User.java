@@ -2,8 +2,12 @@ package com.behoh.testejavaweb.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,8 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.behoh.testejavaweb.entities.enums.TypeUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -24,6 +30,14 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
+	private String email;
+	private String cpfOuCnpj;
+	private Integer type;
+	
+	@ElementCollection
+	@CollectionTable(name = "PHONE")
+	private Set<String> phone = new HashSet<>();
+	
 	
 	@JsonIgnore
 	@ManyToMany
@@ -33,13 +47,20 @@ public class User implements Serializable {
 		)
 	private List<Event> events = new ArrayList<>();
 	
+	
+	@OneToMany(mappedBy = "user")
+	private List<Address> addresses = new ArrayList<>();
+	
 	public User() {
 	}
 
-	public User(Long id, String name) {
+	public User(Long id, String name, String email, String cpfOuCnpj, TypeUser type) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.email = email;
+		this.cpfOuCnpj = cpfOuCnpj;
+		this.type = (type==null ? null : type.getCod());
 	}
 
 	public Long getId() {
@@ -57,11 +78,42 @@ public class User implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getCpfOuCnpj() {
+		return cpfOuCnpj;
+	}
+
+	public void setCpfOuCnpj(String cpfOuCnpj) {
+		this.cpfOuCnpj = cpfOuCnpj;
+	}
+
+	public TypeUser getType() {
+		return TypeUser.toEnum(type);
+	}
+
+	public void setType(TypeUser type) {
+		this.type = type.getCod();
+	}
+
+	public Set<String> getPhone() {
+		return phone;
+	}
 	
 	public List<Event> getEvents() {
 		return events;
 	}
 
+	public List<Address> getAdrresses() {
+		return addresses;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -86,4 +138,5 @@ public class User implements Serializable {
 			return false;
 		return true;
 	}
+
 }

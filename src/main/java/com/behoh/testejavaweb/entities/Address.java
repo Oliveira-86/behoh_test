@@ -24,8 +24,8 @@ public class Address implements Serializable{
 	
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "client_id")
-	private User client;
+	@JoinColumn(name = "user_id")
+	private User user;
 	
 	@ManyToOne
 	@JoinColumn(name = "city_id")
@@ -35,7 +35,7 @@ public class Address implements Serializable{
 	}
 
 	public Address(Long id, String publicPlace, String number, String complement, String neighborhood, String zipCode,
-			User client, City city) {
+			User user, City city) {
 		super();
 		this.id = id;
 		this.publicPlace = publicPlace;
@@ -43,7 +43,7 @@ public class Address implements Serializable{
 		this.complement = complement;
 		this.neighborhood = neighborhood;
 		this.zipCode = zipCode;
-		this.client = client;
+		this.user = user;
 		this.city = city;
 	}
 
@@ -96,11 +96,11 @@ public class Address implements Serializable{
 	}
 
 	public User getUser() {
-		return client;
+		return user;
 	}
 
-	public void setUser(User client) {
-		this.client = client;
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 	public City getCity() {

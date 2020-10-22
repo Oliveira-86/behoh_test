@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.behoh.testejavaweb.entities.User;
 import com.behoh.testejavaweb.entities.dto.UserDTO;
+import com.behoh.testejavaweb.entities.dto.UserNewDTO;
 import com.behoh.testejavaweb.services.UserService;
 
 @RestController
@@ -43,7 +44,7 @@ public class UserResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserDTO objDto) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody UserNewDTO objDto) {
 		User obj = service.fromDto(objDto);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
