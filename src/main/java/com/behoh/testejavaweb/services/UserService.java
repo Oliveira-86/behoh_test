@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.behoh.testejavaweb.entities.User;
+import com.behoh.testejavaweb.entities.dto.UserDTO;
 import com.behoh.testejavaweb.repositories.UserRepository;
 import com.behoh.testejavaweb.services.exceptions.DataBaseException;
 import com.behoh.testejavaweb.services.exceptions.UserNotFoundException;
@@ -37,7 +38,7 @@ public class UserService {
 	
 	public User update(Long id, User obj) {
 		try {
-			User entity = findById(id);
+			User entity = repository.getOne(id);
 			updateData(obj, entity);
 			return repository.save(obj);
 		}
@@ -61,5 +62,9 @@ public class UserService {
 	
 	public void updateData(User newObj, User obj) {
 		newObj.setName(obj.getName());
+	}
+	
+	public User fromDto(UserDTO objDto) {
+		return new User(objDto.getId(), objDto.getName());
 	}
 }

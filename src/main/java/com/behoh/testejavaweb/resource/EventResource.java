@@ -4,7 +4,10 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -43,9 +47,11 @@ public class EventResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Event> insert(@RequestBody Event obj) {
+	public ResponseEntity<EventDTO> insert(@Valid @RequestBody EventDTO objDto) {
+		Event obj = service.fromDto(objDto);
 		obj = service.insert(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
@@ -61,6 +67,17 @@ public class EventResource {
 		return ResponseEntity.ok().body(obj);
 	}
 	
+	@GetMapping(value = "/page")
+	public ResponseEntity<Page<EventDTO>> findPage(
+			@RequestParam(value= "page", defaultValue = "0") Integer page, 
+			@RequestParam(value= "linesPerPage", defaultValue = "24") Integer linesPerPage, 
+			@RequestParam(value= "direction", defaultValue = "ASC") String direction, 
+			@RequestParam(value= "orderBy", defaultValue = "name") String orderBy) {
+		Page<Event> list = service.findPage(page, linesPerPage, direction, orderBy);
+		Page<EventDTO> listDto = list.map(x -> new EventDTO(x));
+		return ResponseEntity.ok().body(listDto);
+	}
+	
 	@PostMapping(value = "/{eventId}/register")
 	public ResponseEntity<UserRegister> register(@PathVariable Long eventId, @RequestBody User user) {
 			UserRegister register = service.register(eventId, user);
@@ -71,6 +88,5 @@ public class EventResource {
 	public ResponseEntity<UserRegister> deregister(@PathVariable Long eventId, @RequestBody User user) {
 			UserRegister response = service.deregister(eventId, user);
 			return ResponseEntity.ok().body(response);
-		
 	}
 }

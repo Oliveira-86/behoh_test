@@ -9,10 +9,14 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.behoh.testejavaweb.entities.Event;
 import com.behoh.testejavaweb.entities.User;
+import com.behoh.testejavaweb.entities.dto.EventDTO;
 import com.behoh.testejavaweb.repositories.EventRepository;
 import com.behoh.testejavaweb.services.exceptions.DataBaseException;
 import com.behoh.testejavaweb.services.exceptions.EventNotFoundException;
@@ -23,10 +27,6 @@ public class EventService {
 
 	@Autowired
 	private EventRepository repository;
-
-	public EventService(EventRepository repository) {
-		this.repository = repository;
-	}
 
 	public List<Event> findAll() {
 		return repository.findAll();
@@ -55,8 +55,8 @@ public class EventService {
 
 	public Event update(Long id, Event obj) {
 		try {
-			Event entity = findById(id);
-			updateData(obj, entity);
+			Event entity = repository.getOne(id);
+			updateData(entity, obj);
 			return repository.save(obj);
 		} 
 		catch (EntityNotFoundException e) {
@@ -64,8 +64,20 @@ public class EventService {
 		}
 	}
 	
+	public Event fromDto(EventDTO objDto) {
+		return new Event(objDto.getId(), objDto.getName(), objDto.getVacancies(), objDto.getdateStart(),objDto.getdateFinish());
+	}
+	
 	public void updateData(Event newObj, Event obj) {
 		newObj.setName(obj.getName());
+		newObj.setVacancies(obj.getVacancies());
+		newObj.setdateStart(obj.getdateStart());
+		newObj.setdateFinish(obj.getdateFinish());
+	}
+	
+	public Page<Event> findPage(Integer page, Integer linesPerPage, String direction, String orderBy) {
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		return repository.findAll(pageRequest);
 	}
 
 	public UserRegister register(Long eventId, User user) {
@@ -75,14 +87,15 @@ public class EventService {
 			Integer vacancies = event.getVacancies();
 			List<User> list = event.getUsers();
 			LocalDateTime now = LocalDateTime.now();
-
-			if (list.size() < vacancies) {
+			
+			if (list.size() < vacancies && now.compareTo(event.getdateStart().plusHours(-1)) < 0) {
 				event.getUsers().add(user);
 				return new UserRegister("User register for the event!");
 			}
 			if (now.compareTo(event.getdateStart().plusHours(-1)) >= 0) {
 				return new UserRegister("NOT REGISTERED. Expired registration date!");
-			} else {
+			} 
+			else {
 				return new UserRegister("NOT REGISTERED. User limit reached!");
 			}
 		} 
@@ -100,6 +113,9 @@ public class EventService {
 			
 			if (event.getUsers().contains(user) && now.isAfter(event.getdateStart())) {
 				return new UserRegister(" CAN NOT BE CANCELED");
+			}
+			if (event.getUsers() != user){
+				return  new UserRegister(" CAN NOT BE CANCELED. User is not at the event");
 			}
 			else {
 				event.getUsers().remove(user);
