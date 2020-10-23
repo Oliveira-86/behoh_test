@@ -1,5 +1,10 @@
 # behoh_test
 
+## Modelo Conceitual do Diagrama de Classes
+
+![Diagrama_BeHOH](https://github.com/Oliveira-86/behoh_test/blob/master/Diagrama_BeHOH.png)
+
+
 Projeto API REST com Spring-Boot.
 ``
 ### Executar localmente
