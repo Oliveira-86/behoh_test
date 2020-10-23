@@ -65,7 +65,7 @@ public class EventService {
 	}
 	
 	public Event fromDto(EventDTO objDto) {
-		return new Event(objDto.getId(), objDto.getName(), objDto.getVacancies(), objDto.getdateStart(),objDto.getdateFinish());
+		return new Event(objDto.getId(), objDto.getName(), objDto.getVacancies(), objDto.getPrice(), objDto.getdateStart(),objDto.getdateFinish());
 	}
 	
 	public void updateData(Event newObj, Event obj) {

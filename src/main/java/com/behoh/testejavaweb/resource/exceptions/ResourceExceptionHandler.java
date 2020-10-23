@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.behoh.testejavaweb.services.exceptions.CategoryNotFoundException;
 import com.behoh.testejavaweb.services.exceptions.DataBaseException;
 import com.behoh.testejavaweb.services.exceptions.EventNotFoundException;
 import com.behoh.testejavaweb.services.exceptions.UserNotFoundException;
@@ -20,7 +21,7 @@ public class ResourceExceptionHandler {
 
 	@ExceptionHandler(EventNotFoundException.class)
 	public ResponseEntity<StandardError> EventNotFound(EventNotFoundException e, HttpServletRequest request){
-		String error = "Resource not found";
+		String error = "Event not found";
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
@@ -28,7 +29,15 @@ public class ResourceExceptionHandler {
 	
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<StandardError> UserNotFound(UserNotFoundException e, HttpServletRequest request){
-		String error = "Resource not found";
+		String error = "User not found";
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+	
+	@ExceptionHandler(CategoryNotFoundException.class)
+	public ResponseEntity<StandardError> UserNotFound(CategoryNotFoundException e, HttpServletRequest request){
+		String error = "Category not found";
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);

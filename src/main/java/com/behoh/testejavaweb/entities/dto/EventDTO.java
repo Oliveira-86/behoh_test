@@ -3,10 +3,6 @@ package com.behoh.testejavaweb.entities.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotEmpty;
-
-import org.hibernate.validator.constraints.Length;
-
 import com.behoh.testejavaweb.entities.Event;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -14,11 +10,9 @@ public class EventDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	
-	@NotEmpty(message= "Mandatory")
-	@Length(min=5, max=50, message="The length should be between 5 and 50 characters")
 	private String name;
 	private Integer vacancies;
+	private Double price;
 
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 	private LocalDateTime dateStart;
@@ -74,5 +68,13 @@ public class EventDTO implements Serializable {
 
 	public void setVacancies(Integer vacancies) {
 		this.vacancies = vacancies;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 }

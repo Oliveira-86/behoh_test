@@ -9,10 +9,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "event_tb")
@@ -24,6 +27,7 @@ public class Event implements Serializable {
 	private Long id;
 	private String name;
 	private Integer vacancies;
+	private Double price;
 
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 	private LocalDateTime dateStart;
@@ -33,15 +37,24 @@ public class Event implements Serializable {
 	
 	@ManyToMany(mappedBy = "events")
 	private List<User> users = new ArrayList<>();
+	
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = "EVENT_CATEGORY",
+		joinColumns = @JoinColumn(name = "event_id"),
+		inverseJoinColumns = @JoinColumn(name = "category_id")
+	)
+	private List<Category> categories = new ArrayList<>();
 
 	public Event() {
 	}
 
-	public Event(Long id, String name, Integer vacancies, LocalDateTime dateStart, LocalDateTime dateFinish) {
+	public Event(Long id, String name, Integer vacancies, Double price, LocalDateTime dateStart, LocalDateTime dateFinish) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.vacancies = vacancies;
+		this.price = price;
 		this.dateStart = dateStart;
 		this.dateFinish = dateFinish;
 		
@@ -69,6 +82,14 @@ public class Event implements Serializable {
 
 	public void setVacancies(Integer vacancies) {
 		this.vacancies = vacancies;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 
 	public LocalDateTime getdateStart() {
@@ -115,4 +136,5 @@ public class Event implements Serializable {
 			return false;
 		return true;
 	}
+
 }
