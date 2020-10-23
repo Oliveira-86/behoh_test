@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.behoh.testejavaweb.entities.Event;
 import com.behoh.testejavaweb.entities.User;
 import com.behoh.testejavaweb.entities.dto.EventDTO;
+import com.behoh.testejavaweb.resource.utils.URL;
 import com.behoh.testejavaweb.services.EventService;
 import com.behoh.testejavaweb.services.utils.UserRegister;
 
@@ -69,12 +70,16 @@ public class EventResource {
 	
 	@GetMapping(value = "/page")
 	public ResponseEntity<Page<EventDTO>> findPage(
-			@RequestParam(value= "page", defaultValue = "0") Integer page, 
-			@RequestParam(value= "linesPerPage", defaultValue = "24") Integer linesPerPage, 
-			@RequestParam(value= "direction", defaultValue = "ASC") String direction, 
-			@RequestParam(value= "orderBy", defaultValue = "name") String orderBy) {
-		Page<Event> list = service.findPage(page, linesPerPage, direction, orderBy);
-		Page<EventDTO> listDto = list.map(x -> new EventDTO(x));
+			@RequestParam(value="name", defaultValue="") String name, 
+			@RequestParam(value="categories", defaultValue="") String categories, 
+			@RequestParam(value="page", defaultValue="0") Integer page, 
+			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
+			@RequestParam(value="orderBy", defaultValue="nome") String orderBy, 
+			@RequestParam(value="direction", defaultValue="ASC") String direction) {
+		String nameDecoded = URL.decodeParam(name);
+		List<Long> ids = URL.decodeIntList(categories);
+		Page<Event> list = service.search(nameDecoded, ids, page, linesPerPage, orderBy, direction);
+		Page<EventDTO> listDto = list.map(obj -> new EventDTO(obj));  
 		return ResponseEntity.ok().body(listDto);
 	}
 	

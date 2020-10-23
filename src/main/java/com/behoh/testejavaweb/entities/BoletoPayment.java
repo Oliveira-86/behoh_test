@@ -17,7 +17,6 @@ public class BoletoPayment extends Payment{
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Date paymentDate;
 	
-
 	public BoletoPayment(Long id, PaymentStatus status, Event event, Date dueDate, Date paymentDate) {
 		super(id, status, event);
 		this.dueDate = dueDate;

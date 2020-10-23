@@ -49,12 +49,11 @@ public class Event implements Serializable {
 	public Event() {
 	}
 
-	public Event(Long id, String name, Integer vacancies, Double price, LocalDateTime dateStart, LocalDateTime dateFinish) {
+	public Event(Long id, String name, Integer vacancies, LocalDateTime dateStart, LocalDateTime dateFinish) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.vacancies = vacancies;
-		this.price = price;
 		this.dateStart = dateStart;
 		this.dateFinish = dateFinish;
 		
@@ -111,7 +110,7 @@ public class Event implements Serializable {
 	public List<User> getUsers() {
 		return users;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

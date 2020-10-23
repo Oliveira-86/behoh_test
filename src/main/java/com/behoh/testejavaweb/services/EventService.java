@@ -14,9 +14,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.behoh.testejavaweb.entities.Category;
 import com.behoh.testejavaweb.entities.Event;
 import com.behoh.testejavaweb.entities.User;
 import com.behoh.testejavaweb.entities.dto.EventDTO;
+import com.behoh.testejavaweb.repositories.CategoryRepository;
 import com.behoh.testejavaweb.repositories.EventRepository;
 import com.behoh.testejavaweb.services.exceptions.DataBaseException;
 import com.behoh.testejavaweb.services.exceptions.EventNotFoundException;
@@ -28,6 +30,9 @@ public class EventService {
 	@Autowired
 	private EventRepository repository;
 
+	@Autowired
+	private CategoryRepository categoryRepository;
+	
 	public List<Event> findAll() {
 		return repository.findAll();
 	}
@@ -65,7 +70,7 @@ public class EventService {
 	}
 	
 	public Event fromDto(EventDTO objDto) {
-		return new Event(objDto.getId(), objDto.getName(), objDto.getVacancies(), objDto.getPrice(), objDto.getdateStart(),objDto.getdateFinish());
+		return new Event(objDto.getId(), objDto.getName(), objDto.getVacancies(), objDto.getdateStart(),objDto.getdateFinish());
 	}
 	
 	public void updateData(Event newObj, Event obj) {
@@ -75,9 +80,10 @@ public class EventService {
 		newObj.setdateFinish(obj.getdateFinish());
 	}
 	
-	public Page<Event> findPage(Integer page, Integer linesPerPage, String direction, String orderBy) {
+	public Page<Event> search(String nome, List<Long> ids, Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return repository.findAll(pageRequest);
+		List<Category> categorias = categoryRepository.findAllById(ids);
+		return repository.findDistinctByNomeContainingAndCategoriasIn(nome, categorias, pageRequest);	
 	}
 
 	public UserRegister register(Long eventId, User user) {
