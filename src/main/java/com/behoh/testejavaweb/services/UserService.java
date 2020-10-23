@@ -17,7 +17,6 @@ import com.behoh.testejavaweb.entities.dto.UserDTO;
 import com.behoh.testejavaweb.entities.dto.UserNewDTO;
 import com.behoh.testejavaweb.entities.enums.TypeUser;
 import com.behoh.testejavaweb.repositories.AddressRepository;
-import com.behoh.testejavaweb.repositories.CityRepository;
 import com.behoh.testejavaweb.repositories.UserRepository;
 import com.behoh.testejavaweb.services.exceptions.DataBaseException;
 import com.behoh.testejavaweb.services.exceptions.UserNotFoundException;
